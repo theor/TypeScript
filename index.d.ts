@@ -13,7 +13,7 @@ interface Tone {
     context: AudioContext;
     input: GainNode;
     output: GainNode;
-    chain(...nodes: any[]): Tone;
+    chain(...nodes: any[]): this;
     connect(unit: any, outputNum?:number, inputNum?:number): Tone;
     connectSeries(...args: any[]): Tone;
     connectParallel(...args: any[]): Tone;
@@ -55,7 +55,9 @@ interface Tone {
     toSeconds(time?: number, now?: number): number;
 }
 
-declare module Tone {
+export = Tone;
+export as namespace Tone;
+declare namespace Tone {
 
     var Abs: {
         new(): Tone.Abs;
@@ -149,7 +151,7 @@ declare module Tone {
     }
 
     var Buffer: {
-        new(url: any): Tone.Buffer; //TODO: Change 'any' to 'AudioBuffer | string' when available
+        new(url: AudioBuffer | string): Tone.Buffer; //TODO: Change 'any' to 'AudioBuffer | string' when available
     };
 
     interface Buffer extends Tone {
@@ -159,8 +161,8 @@ declare module Tone {
         onload: (e: any)=>any;
         url: string; // Readonly
         load(url:string, callback?: (e: any)=>any): Tone.Buffer;
-        onerror();
-        onprogress();
+        // onerror: () => void;
+        onprogress: () => void;
         dispose(): Tone.Buffer;
         get(): AudioBuffer;
         set(buffer: any): Tone.Buffer; //TODO: change any to AudioBuffer | Tone.Buffer
@@ -418,11 +420,11 @@ declare module Tone {
     }
 
     class Frequency extends TimeBase {
-        constructor( val: string | number, units?: string ): TimeBase;
+        constructor( val: string | number, units?: string );
         toMidi( ): number;
         toNote( ): string;
         transpose ( interval: number ): Frequency;
-        harmonize( intervals: number[ ]); Frequency;
+        harmonize( intervals: number[ ]): Frequency;
         toSeconds( ): number;
         toTicks( ): number;
         midiToFrequency( midi: string ): Frequency;
@@ -548,6 +550,14 @@ declare module Tone {
 
     interface Max extends Tone.Signal {
         dispose(): Tone.Max;
+    }
+
+    interface MembraneSynth extends Tone.Instrument {
+
+    }
+
+    var MembraneSynth: {
+        new(options:any): Tone.MembraneSynth;
     }
 
     var Merge: {
@@ -821,6 +831,14 @@ declare module Tone {
         dispose(): Tone.PingPongDelay;
     }
 
+    interface Loop {
+        start(time:Tone.Time): void;
+    }
+
+    var Loop: {
+        new(callback:(time:Tone.Time) => void, interval: Tone.Time):Loop;
+    };
+
     var Player: {
         new(url?: string, onload?: (e: any)=>any): Tone.Player; //todo: string | AudioBuffer
     };
@@ -857,8 +875,8 @@ declare module Tone {
     interface PolySynth extends Tone.Instrument {
         voices: any[];
         dispose(): Tone.PolySynth;
-        get(params?: any[]);
-        set(params: Object);
+        get(params?: any[]):any;
+        set(params: any, value?: number, rampTime?: Tone.Time): Tone;
         setPreset(presetName: string): Tone.PolySynth;
         triggerAttack(value: any, time?: Tone.Time, velocity?: number): Tone.PolySynth; //todo: string | number | Object| string[] | number[]
         triggerAttackRelease(value: any, duration: Tone.Time, time?: Tone.Time, velocity?: number): Tone.PolySynth; //todo: string | number | Object | string[] | number[]
@@ -1078,10 +1096,13 @@ declare module Tone {
         open(time: Tone.Time): Tone.Switch
     }
 
+    interface TransportTime extends Tone.Time {}
+
     interface Time{}
 
     var Transport:  {
         new(): Tone.Transport;
+        start(time:Tone.Time): Tone.TransportTime;
     };
 
     interface Transport extends Tone {
