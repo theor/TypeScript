@@ -1,5 +1,3 @@
-/// <reference path="WebAudio.d.ts" />
-
 // Type definitions for TONE.JS
 // Project: https://github.com/Tonejs/Tone.js
 // Definitions by: Luke Phillips <https://github.com/lukephills>
@@ -1126,4 +1124,5 @@ declare module Tone {
     interface WaveShaper extends Tone.SignalBase {
         curve: number[];
         oversample: string;
+    }
 }
